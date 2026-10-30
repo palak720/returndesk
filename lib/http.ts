@@ -47,3 +47,10 @@ export async function readJson(req: Request): Promise<unknown> {
     throw badRequest("INVALID_JSON", "Request body must be valid JSON");
   }
 }
+
+// Answers unsupported methods in the standard error shape, with an Allow header.
+export const methodNotAllowed = (allowed: string[]) => async () =>
+  NextResponse.json(
+    { error: { code: "METHOD_NOT_ALLOWED", message: `This endpoint supports: ${allowed.join(", ")}` } },
+    { status: 405, headers: { Allow: allowed.join(", ") } }
+  );
